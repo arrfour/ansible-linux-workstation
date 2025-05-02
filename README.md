@@ -5,6 +5,8 @@ The username is declared as a variable in playbook.yaml for assigning permission
 
 Because the kube-tools tasks create a symlink to a path starting with /c/ that is created earlier in the play but won't appear until restart, the playbook will fail when running the first time.  Restart your WSL distro with this windows command (replacy distro name as needed) before running again.
 
+## Updates
+Ubuntu-WSL2 Branch : 20250502alpha
 ` wsl -t Ubuntu-18.04 `
 
 
