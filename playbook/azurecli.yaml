@@ -17,8 +17,19 @@
     repo: "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ {{ ansible_distribution_release }} main"
     state: present
     filename: azure-cli
+  register: azure_repo
+  failed_when: false
+
+- name: Update apt cache after adding azure-cli repo
+  apt:
+    update_cache: yes
+  when: azure_repo is succeeded
 
 - name: Install azure-cli
   apt:
     pkg:
     - azure-cli
+    state: present
+  register: azure_cli_install
+  failed_when: false
+  ignore_errors: yes

@@ -1,11 +1,32 @@
+- name: Check if Microsoft repository is needed
+  stat:
+    path: /etc/apt/sources.list.d/microsoft-prod.list
+  register: ms_repo_exists
+
 - name: Download Microsoft GPG Key
   get_url: 
-    url: https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb
+    url: https://packages.microsoft.com/config/ubuntu/{{ ansible_distribution_version }}/packages-microsoft-prod.deb
     dest: /tmp/packages-microsoft-prod.deb
+    mode: '0644'
+  register: download_result
+  failed_when: false
+  when: not ms_repo_exists.stat.exists
 
 - name: Install Microsoft GPG key
   apt:
     deb: /tmp/packages-microsoft-prod.deb
+  when: 
+    - not ms_repo_exists.stat.exists
+    - download_result is succeeded
+    - download_result.status_code is defined
+    - download_result.status_code == 200
+
+- name: Update apt cache after adding Microsoft repository
+  apt:
+    update_cache: yes
+  when: 
+    - not ms_repo_exists.stat.exists
+    - download_result is succeeded
 
 - name: Enable Universe Repository
   apt_repository:
@@ -16,5 +37,7 @@
   apt:
     pkg:
     - powershell
-  # Powershell not yet supported in Focal (20.04)
-  when: ansible_distribution_release != "focal"
+    state: present
+  register: powershell_install
+  failed_when: false
+  ignore_errors: yes

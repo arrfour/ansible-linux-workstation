@@ -3,9 +3,30 @@ Ansible config for my Linux workstation setup.  This is currently geared to a Wi
 
 The username is declared as a variable in playbook.yaml for assigning permissions along with the underlying Windows OS user path.  Update these accordingly.
 
-Because the kube-tools tasks create a symlink to a path starting with /c/ that is created earlier in the play but won't appear until restart, the playbook will fail when running the first time.  Restart your WSL distro with this windows command (replacy distro name as needed) before running again.
 
-` wsl -t Ubuntu-18.04 `
+Because the kube-tools tasks create a symlink to a Windows path (for example `/mnt/c/Users/...`) which may not be available until the WSL distro has been restarted, the playbook can fail on the first run. Restart your WSL distro before running again — discover distro names with `wsl -l -v` and terminate the distro with:
+
+```
+wsl --terminate <distro>
+```
+
+Example: run the playbook with overrides for your Linux username and Windows user path:
+
+```
+sudo ansible-playbook playbook/playbook.yaml -e "user=arr4 user_windows_path=/mnt/c/Users/arr4"
+```
+
+Updating pinned tool versions
+-----------------------------
+
+- The playbook pins several tool versions via variables at the top of `playbook/playbook.yaml` (e.g. `terraform_version`, `vault_version`, `kind_version`).
+- To change a pinned version, edit `playbook/playbook.yaml` and update the variable value, or override it when running Ansible using `-e`. Example:
+
+```pwsh
+sudo ansible-playbook playbook/playbook.yaml -e "terraform_version=1.6.0 vault_version=1.15.0"
+```
+
+- Note: some tooling (helm, k9s, octant) currently have version strings inside `playbook/kube-tools.yaml`. If you plan to bump those, either update the literal strings in that file or let me know and I can expose them as variables in `playbook/playbook.yaml` for easier management.
 
 
 1. Install Ansible

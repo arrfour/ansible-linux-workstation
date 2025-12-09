@@ -1,8 +1,19 @@
+- name: Install pipx for Python 3.12+
+  apt:
+    pkg:
+    - pipx
+    - python3-venv
+    state: present
+
 - name: pip self-update
   pip:
     name: pip
     state: latest
     executable: pip3
+    extra_args: --break-system-packages
+  register: pip_update
+  failed_when: false
+  ignore_errors: yes
 
 - name: Install Python Packages
   pip:
@@ -11,6 +22,10 @@
       - docker-compose
       - selenium
     executable: pip3
+    extra_args: --break-system-packages
+  register: pip_packages
+  failed_when: false
+  ignore_errors: yes
 
 # Only works if Browser is installed.  Functionality currently broken in WSL
 # - name: Install Firefox Geckodriver for Selenium

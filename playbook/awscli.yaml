@@ -5,6 +5,7 @@
     owner: "{{ user }}"
     group: "{{ user }}"
     state: link
+  when: is_wsl
 
 - name: Download AWS CLI 2 installer
   unarchive:

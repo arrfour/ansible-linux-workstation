@@ -3,16 +3,33 @@
 - name: Configure Workstation
   hosts: localhost
   vars:
-    user: tyler
-    user_windows_path: /c/Users/tyler.sorensen
-    terraform_version: 1.0.7
-    vault_version: 1.8.2
-    kind_version: 0.11.1
+    # Pinned tool versions
+    # Update these values to change the versions installed by the playbook.
+    # You can override these at runtime when running the playbook, for example:
+    #   sudo ansible-playbook playbook/playbook.yaml -e "terraform_version=1.6.0 vault_version=1.15.0"
+    # Keep in mind some tools may require additional compatibility checks when bumping.
+    user: "{{ lookup('env','USER') | default('arr4') }}"
+    user_windows_path: "/mnt/c/Users/{{ lookup('env','USERNAME') | default(lookup('env','USER') | default('arr4')) }}"
+    terraform_version: 1.9.8
+    vault_version: 1.17.2
+    kind_version: 0.20.0
+    # Note: other tool versions (helm, k9s, octant, etc.) are currently hardcoded
+    # in `playbook/kube-tools.yaml`. If you want to make those configurable, move
+    # their version strings here and reference the variables in that task file.
   tasks:
+    - name: Detect WSL
+      command: grep -i microsoft /proc/version
+      register: wsl_check
+      ignore_errors: yes
+      changed_when: false
+
+    - name: Set is_wsl fact
+      set_fact:
+        is_wsl: "{{ wsl_check.rc == 0 }}"
+
     - name: Install base required packages
       apt:
         pkg:
-        - zsh
         - curl
         - wget
         - unzip
@@ -20,7 +37,7 @@
         - bash-completion
         - git
         - software-properties-common
-        - python3.8
+        - python3
         - python3-pip
         - xdg-utils
         state: latest
@@ -46,6 +63,7 @@
           [automount]
           root = /
           options = "metadata"
+      when: is_wsl
           
     - name: Configure Git Credential manager
       git_config:
@@ -53,22 +71,21 @@
         scope: global
         value: /c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe
 
-    - name: Configure Git config email address
-      git_config:
-        name: user.email
-        scope: global
-        value: tyler.sorensen@cellularsales.com
+#    - name: Configure Git config email address
+#      git_config:
+#        name: user.email
+#        scope: global
+#        value: tyler.sorensen@cellularsales.com
 
     - name: Configure Git config user name
       git_config:
         name: user.name
         scope: global
-        value: Tyler Sorensen
+        value: arrfour
 
-    - import_tasks: awscli.yaml        
+#    - import_tasks: awscli.yaml        
     - import_tasks: python.yaml
     - import_tasks: powershell.yaml
-    - import_tasks: zsh.yaml
     - import_tasks: kube-tools.yaml
     - import_tasks: azurecli.yaml
 

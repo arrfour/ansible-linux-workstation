@@ -16,20 +16,11 @@
     owner: "{{ user }}"
     group: "{{ user }}"   
 
-- name: Create zsh completions directory
-  file:
-    path: "/home/{{ user }}/.oh-my-zsh/completions"
-    state: directory
-    owner: "{{ user }}"
-    group: "{{ user }}"
-    mode: '0755'
-    recurse: yes
-
-- name: Set kubectl auto-completion
-  shell: |
-      kubectl completion zsh > "/home/{{ user }}/.oh-my-zsh/completions/_kubectl"
-  args:
-    creates: /home/{{ user }}/.oh-my-zsh/completions/_kubectl
+- name: Check if Windows kube config exists
+  stat:
+    path: "{{ user_windows_path }}/.kube/config"
+  register: windows_kube_config
+  when: is_wsl
 
 - name: Create a symbolic link to Windows kube config
   file:
@@ -38,6 +29,9 @@
     owner: "{{ user }}"
     group: "{{ user }}"
     state: link
+  when: 
+    - is_wsl
+    - windows_kube_config.stat.exists
 
 - name: Install Kind
   get_url:
@@ -56,18 +50,6 @@
   args:
     creates: /usr/local/bin/helm
 
-- name: Set helm auto-completion
-  shell: |
-      helm completion zsh > "/home/{{ user }}/.oh-my-zsh/completions/_helm"
-  args:
-    creates: /home/{{ user }}/.oh-my-zsh/completions/_helm
-
-- name: Create kubectx completions foler
-  file:
-    path: /opt/kubectx/completion
-    state: directory
-
-
 - name: Install kubectx and kubens
   shell: |
       curl -O https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx
@@ -76,13 +58,6 @@
       curl -O https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens
       chmod +x kubens
       mv kubens /usr/local/bin/
-      BASE_URL=https://raw.githubusercontent.com/ahmetb/kubectx/master/completion
-      curl -O ${BASE_URL}/kubectx.zsh
-      curl -O ${BASE_URL}/kubens.zsh
-      mv kubectx.zsh /opt/kubectx/completion
-      mv kubens.zsh /opt/kubectx/completion
-      ln -s /opt/kubectx/completion/kubectx.zsh /home/{{ user }}/.oh-my-zsh/completions/_kubectx.zsh
-      ln -s /opt/kubectx/completion/kubens.zsh /home/{{ user }}/.oh-my-zsh/completions/_kubens.zsh
   args:
     creates: /usr/local/bin/kubectx
   
@@ -96,10 +71,16 @@
   get_url: 
     url: https://github.com/vmware-tanzu/octant/releases/download/v0.12.1/octant_0.12.1_Linux-64bit.deb
     dest: /tmp/octant.deb
+  register: octant_download
+  failed_when: false
 
 - name: Install Octant
   apt:
     deb: /tmp/octant.deb
+  when: 
+    - octant_download is succeeded
+    - octant_download.status_code is defined
+    - octant_download.status_code == 200
 
 
 - name: Install Linkerd
