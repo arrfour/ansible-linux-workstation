@@ -10,7 +10,7 @@
     # Keep in mind some tools may require additional compatibility checks when bumping.
     user: "{{ lookup('env','USER') }}"
     user_windows_path: "/mnt/c/Users/{{ lookup('env','USERNAME') | default(lookup('env','USER')) }}"
-    terraform_version: 1.9.8
+    terraform_version: 1.14.1
     vault_version: 1.17.2
     kind_version: 0.20.0
     # Note: other tool versions (helm, k9s, octant, etc.) are currently hardcoded
