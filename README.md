@@ -1,8 +1,8 @@
 # ansible-linux-workstation
-Ansible config for my Linux workstation setup.  This is currently geared to a Windows Subsystem for Linux (WSL) setup but could be easily adapted.  Some WSL specific settings include creation of wsl.conf file and creating a symlink to the kube config in Windows so it can be shared. 
+
+Ansible config for my Linux workstation setup.  This is currently geared to a Windows Subsystem for Linux (WSL) setup but could be easily adapted.  Some WSL specific settings include creation of wsl.conf file and creating a symlink to the kube config in Windows so it can be shared.
 
 The username is declared as a variable in playbook.yaml for assigning permissions along with the underlying Windows OS user path.  Update these accordingly.
-
 
 Because the kube-tools tasks create a symlink to a Windows path (for example `/mnt/c/Users/...`) which may not be available until the WSL distro has been restarted, the playbook can fail on the first run. Restart your WSL distro before running again — discover distro names with `wsl -l -v` and terminate the distro with:
 
@@ -28,7 +28,6 @@ sudo ansible-playbook playbook/playbook.yaml -e "terraform_version=1.6.0 vault_v
 
 - Note: some tooling (helm, k9s, octant) currently have version strings inside `playbook/kube-tools.yaml`. If you plan to bump those, either update the literal strings in that file or let me know and I can expose them as variables in `playbook/playbook.yaml` for easier management.
 
-
 1. Install Ansible
 
     ```
@@ -45,16 +44,14 @@ sudo ansible-playbook playbook/playbook.yaml -e "terraform_version=1.6.0 vault_v
     ```
 
 For all of the zsh customizations to display properly you will need to install new fonts in Windows and update your shell or code editor accordingly.  See:  
-https://gist.github.com/PashCracken/b6070359486ea651eed66a5e86567ebb#install-required-nerd-fonts
+<https://gist.github.com/PashCracken/b6070359486ea651eed66a5e86567ebb#install-required-nerd-fonts>
 
-https://www.nerdfonts.com/ 
+<https://www.nerdfonts.com/>
 
-https://github.com/ryanoasis/nerd-fonts/releases
-
+<https://github.com/ryanoasis/nerd-fonts/releases>
 
 # Resources
 
-* https://gist.github.com/PashCracken/b6070359486ea651eed66a5e86567ebb
-* https://itnext.io/setting-up-the-kubernetes-tooling-on-windows-10-wsl-d852ddc6699c
-* https://www.edwardthomson.com/blog/git_credential_manager_with_windows_subsystem_for_linux.html
-
+- <https://gist.github.com/PashCracken/b6070359486ea651eed66a5e86567ebb>
+- <https://itnext.io/setting-up-the-kubernetes-tooling-on-windows-10-wsl-d852ddc6699c>
+- <https://www.edwardthomson.com/blog/git_credential_manager_with_windows_subsystem_for_linux.html>
