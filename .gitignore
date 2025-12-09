@@ -1,1 +1,10 @@
 *.retry
+
+# Personal/sensitive configuration
+playbook/vars/personal.yaml
+playbook/vars/secrets.yaml
+
+# Old zsh config files (no longer used, kept locally only)
+playbook/.zshrc
+playbook/.p10k.zsh
+playbook/zsh.yaml

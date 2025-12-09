@@ -1,0 +1,14 @@
+---
+# Example personal configuration file
+# Copy this file to personal.yaml and customize with your settings
+# personal.yaml is excluded from git via .gitignore
+
+# Linux username (detected automatically if not specified)
+# user: your_username
+
+# Windows user path for WSL symlinks
+# user_windows_path: /mnt/c/Users/your_username
+
+# Git configuration (optional)
+# git_user_name: Your Name
+# git_user_email: your.email@example.com

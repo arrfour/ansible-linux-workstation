@@ -8,8 +8,8 @@
     # You can override these at runtime when running the playbook, for example:
     #   sudo ansible-playbook playbook/playbook.yaml -e "terraform_version=1.6.0 vault_version=1.15.0"
     # Keep in mind some tools may require additional compatibility checks when bumping.
-    user: "{{ lookup('env','USER') | default('arr4') }}"
-    user_windows_path: "/mnt/c/Users/{{ lookup('env','USERNAME') | default(lookup('env','USER') | default('arr4')) }}"
+    user: "{{ lookup('env','USER') }}"
+    user_windows_path: "/mnt/c/Users/{{ lookup('env','USERNAME') | default(lookup('env','USER')) }}"
     terraform_version: 1.9.8
     vault_version: 1.17.2
     kind_version: 0.20.0
@@ -70,18 +70,19 @@
         name: credential.helper
         scope: global
         value: /c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe
+      when: is_wsl
 
-#    - name: Configure Git config email address
+#    - name: Configure Git config (optional - uncomment and customize)
 #      git_config:
 #        name: user.email
 #        scope: global
-#        value: tyler.sorensen@cellularsales.com
-
-    - name: Configure Git config user name
-      git_config:
-        name: user.name
-        scope: global
-        value: arrfour
+#        value: your.email@example.com
+#
+#    - name: Configure Git config user name (optional - uncomment and customize)
+#      git_config:
+#        name: user.name
+#        scope: global
+#        value: yourusername
 
 #    - import_tasks: awscli.yaml        
     - import_tasks: python.yaml
