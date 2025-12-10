@@ -2,6 +2,16 @@
 
 Ansible config for my Linux workstation setup.  This is currently geared to a Windows Subsystem for Linux (WSL) setup but could be easily adapted.  Some WSL specific settings include creation of wsl.conf file and creating a symlink to the kube config in Windows so it can be shared.
 
+The playbook includes automated installation of:
+- Base packages (curl, wget, git, jq, etc.)
+- HashiCorp tools (Terraform, Vault)
+- Python tools and packages
+- PowerShell
+- Kubernetes tools (kubectl, helm, kind, k9s, etc.)
+- Azure CLI
+- ZSH with Oh-My-Zsh and customizations
+- **Dotfiles** (bash, vim, tmux configurations from https://github.com/arrfour/dotfiles)
+
 The username is automatically detected from your environment variables. Update these if needed by passing `-e` flags when running the playbook.
 
 Because the kube-tools tasks create a symlink to a Windows path (for example `/mnt/c/Users/...`) which may not be available until the WSL distro has been restarted, the playbook can fail on the first run. Restart your WSL distro before running again — discover distro names with `wsl -l -v` and terminate the distro with:

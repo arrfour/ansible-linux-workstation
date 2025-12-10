@@ -89,6 +89,7 @@
     - import_tasks: powershell.yaml
     - import_tasks: kube-tools.yaml
     - import_tasks: azurecli.yaml
+    - import_tasks: dotfiles.yaml
 
     - name: Remove useless packages from the cache
       apt:

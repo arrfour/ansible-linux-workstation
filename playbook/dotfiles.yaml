@@ -1,0 +1,74 @@
+---
+# Dotfiles installation from https://github.com/arrfour/dotfiles
+# This task file manages bash/vim/tmux configuration files
+
+- name: Clone dotfiles repository
+  git:
+    repo: https://github.com/arrfour/dotfiles.git
+    dest: "/home/{{ user }}/dotfiles"
+    version: master
+    update: yes
+  become: no
+  become_user: "{{ user }}"
+
+- name: Check if dotfiles are already installed (check for symlink)
+  stat:
+    path: "/home/{{ user }}/.bashrc"
+  register: bashrc_stat
+
+- name: Backup existing dotfiles
+  shell: |
+    cd /home/{{ user }}/dotfiles
+    for file in $(find . -maxdepth 1 -name ".*" -type f -printf "%f\n"); do
+      if [ -e /home/{{ user }}/$file ] && [ ! -h /home/{{ user }}/$file ]; then
+        mv -f /home/{{ user }}/$file /home/{{ user }}/${file}.dtbak
+      fi
+    done
+  args:
+    executable: /bin/bash
+  become: no
+  become_user: "{{ user }}"
+  when: bashrc_stat.stat.exists and not bashrc_stat.stat.islnk
+
+- name: Create symlinks for dotfiles
+  shell: |
+    cd /home/{{ user }}/dotfiles
+    for file in $(find . -maxdepth 1 -name ".*" -type f -printf "%f\n"); do
+      if [ -h /home/{{ user }}/$file ]; then
+        rm -f /home/{{ user }}/$file
+      fi
+      ln -sf /home/{{ user }}/dotfiles/$file /home/{{ user }}/$file
+    done
+  args:
+    executable: /bin/bash
+  become: no
+  become_user: "{{ user }}"
+
+- name: Set ownership of dotfiles directory
+  file:
+    path: "/home/{{ user }}/dotfiles"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    recurse: yes
+
+- name: Ensure vim directories exist
+  file:
+    path: "/home/{{ user }}/.vim/{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: '0755'
+  loop:
+    - tmp/undo
+    - tmp/backup
+    - tmp/swap
+  become: no
+  become_user: "{{ user }}"
+
+- name: Install vim-scripts for enhanced vim functionality
+  apt:
+    pkg:
+    - vim-scripts
+    state: present
+  ignore_errors: yes
