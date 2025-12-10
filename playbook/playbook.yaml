@@ -72,6 +72,13 @@
         value: /c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-manager.exe
       when: is_wsl
 
+    - name: Configure Git Credential helper (Linux)
+      git_config:
+        name: credential.helper
+        scope: global
+        value: store
+      when: not is_wsl
+
 #    - name: Configure Git config (optional - uncomment and customize)
 #      git_config:
 #        name: user.email
