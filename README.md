@@ -9,7 +9,6 @@ The playbook includes automated installation of:
 - PowerShell
 - Kubernetes tools (kubectl, helm, kind, k9s, etc.)
 - Azure CLI
-- ZSH with Oh-My-Zsh and customizations
 - **Dotfiles** (bash, vim, tmux configurations from https://github.com/arrfour/dotfiles)
 
 The username is automatically detected from your environment variables. Update these if needed by passing `-e` flags when running the playbook.
@@ -52,13 +51,6 @@ sudo ansible-playbook playbook/playbook.yaml -e "terraform_version=1.6.0 vault_v
     ```
     sudo ansible-playbook playbook/playbook.yaml
     ```
-
-For all of the zsh customizations to display properly you will need to install new fonts in Windows and update your shell or code editor accordingly.  See:  
-<https://gist.github.com/PashCracken/b6070359486ea651eed66a5e86567ebb#install-required-nerd-fonts>
-
-<https://www.nerdfonts.com/>
-
-<https://github.com/ryanoasis/nerd-fonts/releases>
 
 # Resources
 
