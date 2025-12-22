@@ -22,7 +22,7 @@ wsl --terminate <distro>
 Example: run the playbook with overrides for your Linux username and Windows user path:
 
 ```
-sudo ansible-playbook playbook/playbook.yaml -e "user=arr4 user_windows_path=/mnt/c/Users/arr4"
+sudo ansible-playbook playbook/playbook.yaml -e "user=your_username user_windows_path=/mnt/c/Users/your_username"
 ```
 
 Updating pinned tool versions
